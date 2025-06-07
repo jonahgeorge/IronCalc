@@ -307,4 +307,75 @@ impl Model {
 
         CalcResult::Number(days_from_1900 as f64 + days.fract())
     }
+
+    /// =DATEDIF(start_date, end_date, unit)
+    pub(crate) fn fn_datedif(&mut self, args: &[Node], cell: CellReferenceIndex) -> CalcResult {
+        // https://support.microsoft.com/en-us/office/datedif-function-25dba1a4-2812-480b-84dd-8b32a451b35c
+        // TODO: throw an error if start_date is greater than end_date
+        let start_date_serial_number = match self.get_number(&args[0], cell) {
+            Ok(c) => c.floor() as i64,
+            Err(s) => return s,
+        };
+        let start_date = match from_excel_date(start_date_serial_number) {
+            Ok(date) => date,
+            Err(_) => {
+                return CalcResult::Error {
+                    error: Error::NUM,
+                    origin: cell,
+                    message: "Out of range parameters for start_date".to_string(),
+                }
+            }
+        };
+
+        let end_date_serial_number = match self.get_number(&args[1], cell) {
+            Ok(c) => c.floor() as i64,
+            Err(s) => return s,
+        };
+        let end_date = match from_excel_date(end_date_serial_number) {
+            Ok(date) => date,
+            Err(_) => {
+                return CalcResult::Error {
+                    error: Error::NUM,
+                    origin: cell,
+                    message: "Out of range parameters for end_date".to_string(),
+                }
+            }
+        };
+
+        let unit = match self.get_string(&args[2], cell) {
+            Ok(c) => c,
+            Err(s) => return s,
+        };
+
+        let diff = end_date - start_date;
+
+        // https://github.com/chronotope/chrono/issues/1282
+        match unit.as_str() {
+            // "Y" The number of complete years in the period.
+            // "Y" => CalcResult::Number(diff.num_years() as f64),
+
+            // "M" The number of complete months in the period.
+            // "M" | "m" => CalcResult::Number(diff.num_months() as f64),
+
+            // "D" The number of days in the period.
+            "D" | "d" => CalcResult::Number(diff.num_days() as f64),
+
+            // "MD" The difference between the days in start_date and end_date. The months and years of the dates are ignored.
+            //      Important: We don't recommend using the "MD" argument, as there are known limitations with it. See the known issues section below.
+            // "MD" => CalcResult::Number(diff.num_days() as f64),
+
+            // "YM" The difference between the months in start_date and end_date. The days and years of the dates are ignored
+            // "YM" => CalcResult::Number(diff.num_months() as f64),
+
+            // "YD" The difference between the days of start_date and end_date. The years of the dates are ignored.
+            // "YD" => CalcResult::Number(diff.num_days() as f64),
+            _ => {
+                return CalcResult::Error {
+                    error: Error::VALUE,
+                    origin: cell,
+                    message: "Invalid unit".to_string(),
+                }
+            }
+        }
+    }
 }

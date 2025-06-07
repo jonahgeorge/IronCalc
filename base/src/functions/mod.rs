@@ -152,6 +152,7 @@ pub enum Function {
     Now,
     Today,
     Year,
+    DateDif,
 
     // Financial
     Cumipmt,
@@ -831,6 +832,7 @@ impl fmt::Display for Function {
             Function::Edate => write!(f, "EDATE"),
             Function::Today => write!(f, "TODAY"),
             Function::Now => write!(f, "NOW"),
+            Function::DateDif => write!(f, "DATEDIF"),
             Function::Pmt => write!(f, "PMT"),
             Function::Pv => write!(f, "PV"),
             Function::Rate => write!(f, "RATE"),
@@ -1069,6 +1071,7 @@ impl Model {
             Function::Edate => self.fn_edate(args, cell),
             Function::Today => self.fn_today(args, cell),
             Function::Now => self.fn_now(args, cell),
+            Function::DateDif => self.fn_datedif(args, cell),
             // Financial
             Function::Pmt => self.fn_pmt(args, cell),
             Function::Pv => self.fn_pv(args, cell),
