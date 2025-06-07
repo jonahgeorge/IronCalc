@@ -152,6 +152,7 @@ pub enum Function {
     Now,
     Today,
     Year,
+    DateValue,
 
     // Financial
     Cumipmt,
@@ -250,7 +251,7 @@ pub enum Function {
 }
 
 impl Function {
-    pub fn into_iter() -> IntoIter<Function, 195> {
+    pub fn into_iter() -> IntoIter<Function, 196> {
         [
             Function::And,
             Function::False,
@@ -351,6 +352,7 @@ impl Function {
             Function::Maxifs,
             Function::Minifs,
             Function::Geomean,
+            Function::DateValue,
             Function::Year,
             Function::Day,
             Function::Month,
@@ -624,6 +626,7 @@ impl Function {
             "EDATE" => Some(Function::Edate),
             "TODAY" => Some(Function::Today),
             "NOW" => Some(Function::Now),
+            "DATEVALUE" => Some(Function::DateValue),
             // Financial
             "PMT" => Some(Function::Pmt),
             "PV" => Some(Function::Pv),
@@ -823,6 +826,7 @@ impl fmt::Display for Function {
             Function::Maxifs => write!(f, "MAXIFS"),
             Function::Minifs => write!(f, "MINIFS"),
             Function::Geomean => write!(f, "GEOMEAN"),
+            Function::DateValue => write!(f, "DATEVALUE"),
             Function::Year => write!(f, "YEAR"),
             Function::Day => write!(f, "DAY"),
             Function::Month => write!(f, "MONTH"),
@@ -1061,6 +1065,7 @@ impl Model {
             Function::Minifs => self.fn_minifs(args, cell),
             Function::Geomean => self.fn_geomean(args, cell),
             // Date and Time
+            Function::DateValue => self.fn_datevalue(args, cell),
             Function::Year => self.fn_year(args, cell),
             Function::Day => self.fn_day(args, cell),
             Function::Eomonth => self.fn_eomonth(args, cell),

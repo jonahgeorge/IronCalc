@@ -8,6 +8,7 @@ use crate::constants::MINIMUM_DATE_SERIAL_NUMBER;
 use crate::expressions::types::CellReferenceIndex;
 use crate::formatter::dates::date_to_serial_number;
 use crate::formatter::dates::permissive_date_to_serial_number;
+use crate::formatter::dates::text_to_naive_date;
 use crate::model::get_milliseconds_since_epoch;
 use crate::{
     calc_result::CalcResult, constants::EXCEL_DATE_BASE, expressions::parser::Node,
@@ -306,5 +307,37 @@ impl Model {
         let days = (local_time.num_seconds_from_midnight() as f64) / (60.0 * 60.0 * 24.0);
 
         CalcResult::Number(days_from_1900 as f64 + days.fract())
+    }
+
+    /// DATEVALUE(date_text)
+    pub(crate) fn fn_datevalue(&mut self, args: &[Node], cell: CellReferenceIndex) -> CalcResult {
+        let date_text = match self.get_string(&args[0], cell) {
+             Ok(c) => c,
+             Err(s) => return s,
+        };
+
+        let date = match text_to_naive_date(&date_text) {
+            Some(date) => date,
+            None => {
+                return CalcResult::Error {
+                    error: Error::VALUE,
+                    origin: cell,
+                    message: "Invalid date format".to_string(),
+                }
+            }
+        };
+
+        let serial = match date_to_serial_number(date.day(), date.month(), date.year()) {
+            Ok(serial) => serial,
+            Err(message) => {
+                return CalcResult::Error {
+                    error: Error::NUM,
+                    origin: cell,
+                    message,
+                }
+            }
+        };
+
+        CalcResult::Number(serial as f64)
     }
 }

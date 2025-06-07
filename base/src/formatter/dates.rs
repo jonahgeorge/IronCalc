@@ -36,6 +36,27 @@ pub fn from_excel_date(days: i64) -> Result<NaiveDate, String> {
     Ok(dt + Duration::days(days - 2))
 }
 
+pub fn text_to_naive_date(date: &str) -> Option<NaiveDate> {
+    let formats = [
+        "%m-%d-%y",        // 6-7-25
+        "%m/%d/%Y",        // 6/7/2025
+        "%Y-%m-%d",        // 2025-06-07
+        "%B %e, %Y",       // June 7, 2025
+        "%e %B %y",        // 7 June 25
+        "%e %b %y",        // 7 Jun 25
+        "%e %B %Y",        // 7 JUNE 2025
+        "%m-%d-%Y",        // 06-07-2025
+    ];
+
+    for fmt in formats.iter() {
+        if let Ok(date) = NaiveDate::parse_from_str(date, fmt) {
+            return Some(date);
+        }
+    }
+
+    None
+}
+
 pub fn date_to_serial_number(day: u32, month: u32, year: i32) -> Result<i32, String> {
     match NaiveDate::from_ymd_opt(year, month, day) {
         Some(native_date) => Ok(convert_to_serial_number(native_date)),
