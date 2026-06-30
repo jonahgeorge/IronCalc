@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+require "rake/testtask"
+require "rb_sys/extensiontask"
+
+GEMSPEC = Gem::Specification.load("ironcalc.gemspec")
+
+# Compiles ext/ironcalc into lib/ironcalc/ironcalc_ruby.<dlext> via
+# rake-compiler. The task name must match the Cargo package name so rb_sys can
+# resolve the crate via `cargo metadata`.
+RbSys::ExtensionTask.new("ironcalc-ruby", GEMSPEC) do |ext|
+  ext.lib_dir = "lib/ironcalc"
+end
+
+Rake::TestTask.new(test: :compile) do |t|
+  t.libs << "test" << "lib"
+  t.test_files = FileList["test/**/test_*.rb"]
+  t.warning = false
+end
+
+task default: %i[compile test]

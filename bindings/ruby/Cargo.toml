@@ -1,0 +1,7 @@
+# A small workspace rooted at the gem directory. This keeps the Ruby extension
+# crate out of the top-level IronCalc workspace (which is built with a plain
+# `cargo build` that must not depend on libruby), while still letting
+# `cargo metadata` / rb_sys resolve the crate when building the gem.
+[workspace]
+resolver = "2"
+members = ["ext/ironcalc"]

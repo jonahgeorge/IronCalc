@@ -1,0 +1,6 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+# Depend on the gem's own gemspec for development dependencies.
+gemspec

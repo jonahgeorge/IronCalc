@@ -1,0 +1,6 @@
+# Allow a bare `cargo build` to link the cdylib against the Ruby symbols that
+# are only resolved when the library is loaded into a running interpreter.
+# `rake compile` goes through rb_sys, which sets these flags itself, so this
+# only matters for developers invoking cargo directly.
+[target.'cfg(target_os = "macos")']
+rustflags = ["-C", "link-arg=-Wl,-undefined,dynamic_lookup"]

@@ -1,0 +1,13 @@
+/.bundle/
+/vendor/bundle/
+/pkg/
+/tmp/
+Gemfile.lock
+
+# Compiled native extension and Rust build artifacts
+/target/
+ext/ironcalc/target/
+lib/ironcalc/*.so
+lib/ironcalc/*.bundle
+lib/ironcalc/*.dll
+*.o

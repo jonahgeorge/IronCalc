@@ -67,3 +67,15 @@ jobs:
         uses: Swatinem/rust-cache@v2
       - name: Python Tests
         run: make test-python
+  test-ruby:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+      - name: Ruby Tests
+        run: make test-ruby

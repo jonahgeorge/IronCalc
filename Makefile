@@ -37,8 +37,12 @@ test-nodejs:
 test-python:
 	cd bindings/python && ./run_tests.sh && ./run_examples.sh
 
+.PHONY: test-ruby
+test-ruby:
+	cd bindings/ruby && ./run_tests.sh
+
 .PHONY: tests
-tests: lint test-rust test-js test-python test-nodejs test-language-bin
+tests: lint test-rust test-js test-python test-nodejs test-ruby test-language-bin
 
 .PHONY: remove-artifacts
 remove-artifacts:
@@ -52,6 +56,9 @@ clean: remove-artifacts
 	rm -r -f base/target
 	rm -r -f xlsx/target
 	rm -r -f bindings/python/target
+	rm -r -f bindings/ruby/target
+	rm -r -f bindings/ruby/tmp
+	rm -f bindings/ruby/lib/ironcalc/*.bundle bindings/ruby/lib/ironcalc/*.so
 	rm -r -f bindings/wasm/targets
 	rm -f cargo-test-*
 	rm -f base/cargo-test-*

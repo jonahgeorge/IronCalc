@@ -13,6 +13,9 @@ exclude = [
   "generate_language",
   "generate_locale",
   "webapp/app.ironcalc.com/server",
+  # Built via rake-compiler/rb_sys (links against libruby), not the workspace.
+  # This is its own (nested) workspace rooted at bindings/ruby.
+  "bindings/ruby",
 ]
 
 [profile.release]
