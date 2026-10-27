@@ -303,11 +303,12 @@ pub(super) fn load_styles<R: Read + std::io::Seek>(
 
     let mut cell_styles = Vec::new();
     let mut style_names = HashMap::new();
+    // NB: `cellStyles` is optional (ECMA-376 Part 1, 18.8.39): without it the
+    // workbook has no named styles.
     let cell_style_nodes = style_sheet
         .children()
-        .filter(|n| n.has_tag_name("cellStyles"))
-        .collect::<Vec<&XmlNode>>()[0];
-    for cell_style in cell_style_nodes.children() {
+        .find(|n| n.has_tag_name("cellStyles"));
+    for cell_style in cell_style_nodes.iter().flat_map(|n| n.children()) {
         let name = get_attribute(cell_style, "name")?.to_string();
         let xf_id = get_number(cell_style, "xfId");
         let builtin_id = get_number(cell_style, "builtinId");
